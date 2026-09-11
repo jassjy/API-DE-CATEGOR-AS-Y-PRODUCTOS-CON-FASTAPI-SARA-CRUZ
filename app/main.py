@@ -16,12 +16,12 @@ app = FastAPI(
 # =====================================================
 # ROOT + HEALTH
 # =====================================================
-@app.get("/")
+@app.get("/", status_code=status.HTTP_200_OK)
 def root():
     return {"message": "Hello, World! api Functional!"}
 
 
-@app.get("/health")
+@app.get("/health", status_code=status.HTTP_200_OK)
 def health():
     return {"status": "healthy"}
 
@@ -29,7 +29,7 @@ def health():
 # =====================================================
 # ENDPOINTS DE PRODUCTOS
 # =====================================================
-@app.get("/products/", response_model=list[Product])
+@app.get("/products/", response_model=list[Product], status_code=status.HTTP_200_OK)
 def get_products(
     category: str | None = None,
     available: bool | None = None,
@@ -53,7 +53,7 @@ def get_products(
     return result
 
 
-@app.get("/products/{product_id}", response_model=Product)
+@app.get("/products/{product_id}", response_model=Product, status_code=status.HTTP_200_OK)
 def get_product_by_id(product_id: int):
     for product in products_db:
         if product["id"] == product_id:
@@ -78,7 +78,7 @@ def create_product(product: ProductCreate):
     return new_product
 
 
-@app.patch("/products/{product_id}", response_model=Product)
+@app.patch("/products/{product_id}", response_model=Product, status_code=status.HTTP_200_OK)
 def update_product(product_id: int, product_update: ProductUpdate):
     for index, product in enumerate(products_db):
         if product["id"] == product_id:
@@ -113,7 +113,7 @@ def delete_product(product_id: int):
 # =====================================================
 # ENDPOINTS DE CATEGORÍAS
 # =====================================================
-@app.get("/categories", response_model=list[Category])
+@app.get("/categories", response_model=list[Category], status_code=status.HTTP_200_OK)
 def get_categories(
     active: bool | None = None,
     search: str | None = None,
@@ -129,7 +129,7 @@ def get_categories(
     return result
 
 
-@app.get("/categories/{category_id}", response_model=Category)
+@app.get("/categories/{category_id}", response_model=Category, status_code=status.HTTP_200_OK)
 def get_category(category_id: int):
     for category in categories_db:
         if category["id"] == category_id:
@@ -151,7 +151,7 @@ def create_category(category: CategoryCreate):
     return new_category
 
 
-@app.patch("/categories/{category_id}", response_model=Category)
+@app.patch("/categories/{category_id}", response_model=Category, status_code=status.HTTP_200_OK)
 def update_category(category_id: int, category_update: CategoryUpdate):
     for index, category in enumerate(categories_db):
         if category["id"] == category_id:

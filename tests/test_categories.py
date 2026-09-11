@@ -64,7 +64,7 @@ def test_update_existing_category(client):
 
 # CA09 - Actualizar inexistente
 def test_update_non_existing_category(client):
-    response = client.patch("/categories/999", json={"name": "X"})
+    response = client.patch("/categories/999", json={"name": "XYZ"})
     assert response.status_code == 404
 
 

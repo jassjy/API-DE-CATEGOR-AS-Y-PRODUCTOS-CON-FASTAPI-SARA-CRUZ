@@ -66,7 +66,7 @@ mi-proyecto/
 Desde la raíz del proyecto:
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app
 ```
 
 La API quedará disponible en:

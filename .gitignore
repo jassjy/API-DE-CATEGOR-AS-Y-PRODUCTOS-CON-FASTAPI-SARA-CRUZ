@@ -1,0 +1,70 @@
+# ==========================================
+# Entorno Virtual (¡Lo más importante!)
+# ==========================================
+.venv/
+venv/
+env/
+ENV/
+
+# ==========================================
+# Archivos de Python (Caché y compilados)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# Pruebas (Pytest)
+# ==========================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ==========================================
+# Base de datos local (SQLite)
+# ==========================================
+*.db
+*.sqlite3
+*.sqlite
+
+# ==========================================
+# Variables de entorno (Secretos)
+# ==========================================
+.env
+.env.*
+
+# ==========================================
+# Editores de código (VS Code, PyCharm, etc.)
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==========================================
+# Sistema Operativo (Windows/Mac)
+# ==========================================
+.DS_Store
+Thumbs.db
+Desktop.ini
