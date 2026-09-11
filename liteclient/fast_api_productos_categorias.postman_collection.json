@@ -1,0 +1,376 @@
+{
+  "info": {
+    "_postman_id": "4554f63c-2ada-4f91-aa64-97604f703cab",
+    "name": "FAST_API_PRODUCTOS/CATEGORIAS",
+    "description": "",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [],
+  "item": [
+    {
+      "name": "PRODUCTS",
+      "item": [
+        {
+          "name": "health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/health",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "health"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "products/",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/products/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "products",
+                ""
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/products/{products_id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/products/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "products",
+                "1"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/products",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "products"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Product 6\",\n  \"category\": \"Laptops\",\n  \"price\": 35.99,\n  \"stock\": 15,\n  \"available\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/products/{product_id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/products/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "products",
+                "1"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Product 6\",\n  \"category\": \"Laptops\",\n  \"price\": 35.99,\n  \"stock\": 15,\n  \"available\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/products/{product_id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/products/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "products",
+                "1"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                ""
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CATEGORIES",
+      "item": [
+        {
+          "name": "/categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/categories",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "categories"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/categories",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/categories",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "categories"
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/categories/{category_id}",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/categories/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "categories",
+                ""
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/categories/{category_id}",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/categories/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "categories",
+                ""
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/categories/{category_id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/categories/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "path": [
+                "categories",
+                ""
+              ],
+              "port": "8000",
+              "query": []
+            },
+            "body": {
+              "mode": "none"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
