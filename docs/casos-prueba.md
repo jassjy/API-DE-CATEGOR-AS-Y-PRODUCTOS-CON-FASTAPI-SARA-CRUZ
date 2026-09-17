@@ -1,146 +1,40 @@
 # Casos de prueba
 
-Los casos se ejecutan contra un ambiente aislado y se identifican con el mismo código usado en los nombres o comentarios de `tests/`.
+Todos los casos se ejecutan con `TestClient` y el fixture `reset_db`. Estado `PASSED` corresponde a la ejecución final de `pytest -v`.
 
-## Casos positivos
+## Categorías
 
-### CP001 — Listar productos
-- **Requisito:** RF01. **Prioridad:** Alta.
-- **Precondición:** Datos iniciales cargados.
-- **Pasos:** Enviar `GET /products/` y revisar la respuesta.
-- **Resultado esperado:** HTTP 200, lista JSON con los productos.
+| ID | Requisito/regla | Título y prioridad | Precondición | Datos | Pasos | Resultado esperado | Resultado obtenido | Estado |
+|---|---|---|---|---|---|---|---|---|
+| CP-CAT-01 | RF01 | Crear válida — Alta | API disponible | `{"name":"Periféricos nuevos"}` | POST `/categories` | 201 y objeto creado | 201 y objeto | PASSED |
+| CP-CAT-02 | RF02 | Listar — Alta | Categorías base | — | GET `/categories` | 200 y lista | 200 y lista | PASSED |
+| CP-CAT-03 | RF03 | Consultar existente — Alta | Categoría 1 existe | ID 1 | GET `/categories/1` | 200 | 200 | PASSED |
+| CP-CAT-04 | RF04 | Consultar inexistente — Alta | API disponible | ID 99999 | GET `/categories/99999` | 404 | 404 | PASSED |
+| CP-CAT-05 | RN01 | Nombre menor al mínimo — Alta | API disponible | `name=AB` | POST `/categories` | 422 | 422 | PASSED |
+| CP-CAT-06 | RN01 | Nombre de 3 caracteres — Media | API disponible | `name=Red` | POST `/categories` | 201 | 201 | PASSED |
+| CP-CAT-07 | RN02 | Duplicado case-insensitive — Alta | Audio existe | `name=audio` | POST `/categories` | 409 | 409 | PASSED |
 
-### CP002 — Filtrar productos
-- **Requisito:** RF01. **Prioridad:** Media.
-- **Datos:** `GET /products/?category=Laptops`.
-- **Resultado esperado:** HTTP 200; cada elemento pertenece a Laptops.
+## Productos
 
-### CP003 — Consultar producto existente
-- **Requisito:** RF02. **Prioridad:** Alta.
-- **Datos:** `GET /products/1`.
-- **Resultado esperado:** HTTP 200 y objeto con `id=1`.
+| ID | Requisito/regla | Título y prioridad | Precondición | Datos | Pasos | Resultado esperado | Resultado obtenido | Estado |
+|---|---|---|---|---|---|---|---|---|
+| CP-PROD-01 | RF05 | Crear válido — Alta | Categoría 1 existe | Teclado, 250000, 10, cat. 1 | POST `/products` | 201 | 201 | PASSED |
+| CP-PROD-02 | RF06 | Listar — Alta | Productos base | — | GET `/products` | 200 y lista | 200 y lista | PASSED |
+| CP-PROD-03 | RF07 | Consultar existente — Alta | Producto 1 existe | ID 1 | GET `/products/1` | 200 | 200 | PASSED |
+| CP-PROD-04 | RF08 | Consultar inexistente — Alta | API disponible | ID 99999 | GET `/products/99999` | 404 | 404 | PASSED |
+| CP-PROD-05 | RF09/RN08 | Actualizar válido — Alta | Producto 1 y cat. 1 existen | PUT con datos válidos | PUT `/products/1` | 200 y datos actualizados | 200 | PASSED |
+| CP-PROD-06 | RF10 | Actualizar inexistente — Alta | API disponible | ID 99999 y payload válido | PUT `/products/99999` | 404 | 404 | PASSED |
+| CP-PROD-07 | RF11 | Eliminar existente — Alta | Producto 1 existe | ID 1 | DELETE y GET posterior | 204 y luego 404 | 204 y 404 | PASSED |
+| CP-PROD-08 | RF12 | Eliminar inexistente — Alta | API disponible | ID 99999 | DELETE `/products/99999` | 404 | 404 | PASSED |
+| CP-PROD-09 | RN03 | Nombre menor a 3 — Alta | API disponible | `name=AB` | POST válido restante | 422 | 422 | PASSED |
+| CP-PROD-10 | RN03 | Nombre de 3 caracteres — Media | Cat. 1 existe | `name=ABC` | POST producto | 201 | 201 | PASSED |
+| CP-PROD-11 | RN04 | Precio 0 — Alta | API disponible | `price=0` | POST producto | 422 | 422 | PASSED |
+| CP-PROD-12 | RN04 | Precio negativo — Alta | API disponible | `price=-1000` | POST producto | 422 | 422 | PASSED |
+| CP-PROD-13 | RN04 | Precio mínimo positivo — Media | Cat. 1 existe | `price=0.01` | POST producto | 201 | 201 | PASSED |
+| CP-PROD-14 | RN05/RN07 | Stock 0 — Alta | Cat. 1 existe | `stock=0` | POST producto | 201 y aceptación | 201 y aceptación | PASSED |
+| CP-PROD-15 | RN05 | Stock negativo — Alta | API disponible | `stock=-1` | POST producto | 422 | 422 | PASSED |
+| CP-PROD-16 | RN06 | Categoría inexistente al crear — Alta | API disponible | `category_id=99999` | POST producto | 404 | 404 | PASSED |
+| CP-PROD-17 | RN08/RN04 | Precio inválido al actualizar — Alta | Producto 1 existe | PUT con `price=0` | PUT `/products/1` | 422 | 422 | PASSED |
+| CP-PROD-18 | RN08/RN06 | Categoría inexistente al actualizar — Alta | Producto 1 existe | PUT con cat. 99999 | PUT `/products/1` | 404 | 404 | PASSED |
 
-### CP005 — Crear producto válido
-- **Requisito:** RF03, RN03, RN07. **Prioridad:** Crítica.
-- **Datos:** `{"name":"Mouse QA","category":"Accesorios","price":120000,"stock":5}`.
-- **Resultado esperado:** HTTP 201, ID generado y `available=true`.
-
-### CP010 — Actualizar producto
-- **Requisito:** RF04. **Prioridad:** Alta.
-- **Datos:** `PATCH /products/1` con `{"price":99.99}`.
-- **Resultado esperado:** HTTP 200; precio actualizado y demás campos conservados.
-
-### CP011 — Recalcular disponibilidad
-- **Requisito:** RN07. **Prioridad:** Alta.
-- **Datos:** `PATCH /products/1` con `{"stock":0}`.
-- **Resultado esperado:** HTTP 200 y `available=false`.
-
-### CP012 — Eliminar producto existente
-- **Requisito:** RF05. **Prioridad:** Alta.
-- **Pasos:** Crear un producto, enviar DELETE por su ID y consultarlo nuevamente.
-- **Resultado esperado:** DELETE HTTP 204; consulta posterior HTTP 404.
-
-### CP014 — Listar categorías
-- **Requisito:** RF06. **Prioridad:** Alta.
-- **Resultado esperado:** HTTP 200 y lista JSON.
-
-### CP018 — Crear categoría válida
-- **Requisito:** RF08, RN04. **Prioridad:** Alta.
-- **Datos:** `{"name":"Tablets","description":"Dispositivos táctiles","active":true}`.
-- **Resultado esperado:** HTTP 201 y categoría creada.
-
-## Casos negativos
-
-### CP004 — Consultar producto inexistente
-- **Requisito:** RN05. **Prioridad:** Crítica.
-- **Datos:** `GET /products/999`.
-- **Resultado esperado:** HTTP 404; no se devuelve producto válido.
-
-### CP006 — Rechazar precio cero
-- **Requisito:** RN02. **Prioridad:** Alta.
-- **Datos:** Producto válido con `price=0`.
-- **Resultado esperado:** HTTP 422 y no se crea el producto.
-
-### CP007 — Rechazar precio negativo y stock negativo
-- **Requisito:** RN02, RN03. **Prioridad:** Crítica.
-- **Datos:** `price=-1` o `stock=-1`.
-- **Resultado esperado:** HTTP 422.
-
-### CP008 — Rechazar nombre de producto ausente
-- **Requisito:** RN01. **Prioridad:** Alta.
-- **Datos:** Producto sin `name`.
-- **Resultado esperado:** HTTP 422.
-
-### CP009 — Rechazar nombre de producto demasiado corto
-- **Requisito:** RN01. **Prioridad:** Media.
-- **Datos:** `name="A"`.
-- **Resultado esperado:** HTTP 422.
-
-### CP013 — No eliminar producto inexistente
-- **Requisito:** RF05, RN05. **Prioridad:** Alta.
-- **Datos:** `DELETE /products/999`.
-- **Resultado esperado:** HTTP 404.
-
-### CP017 — Consultar categoría inexistente
-- **Requisito:** RF07, RN05. **Prioridad:** Alta.
-- **Datos:** `GET /categories/999`.
-- **Resultado esperado:** HTTP 404.
-
-### CP019 — Rechazar categoría con nombre corto
-- **Requisito:** RN04, RN06. **Prioridad:** Alta.
-- **Datos:** `POST /categories` con `{"name":"AB"}`.
-- **Resultado esperado:** HTTP 422.
-
-### CP021 — No actualizar categoría inexistente
-- **Requisito:** RF09, RN05. **Prioridad:** Media.
-- **Datos:** `PATCH /categories/999`.
-- **Resultado esperado:** HTTP 404.
-
-### CP023 — No eliminar categoría inexistente
-- **Requisito:** RF10, RN05. **Prioridad:** Media.
-- **Datos:** `DELETE /categories/999`.
-- **Resultado esperado:** HTTP 404.
-
-### CP024 — Rechazar categoría inexistente en producto
-- **Requisito:** RN04, RN06. **Prioridad:** Crítica.
-- **Datos:** Producto con `category="NoExiste"`.
-- **Resultado esperado:** HTTP 422 y el producto no se crea.
-
-### CP026 — Buscar categorías por nombre
-- **Requisito:** RF06. **Prioridad:** Media.
-- **Datos:** `GET /categories?search=comp`.
-- **Resultado esperado:** HTTP 200 y la categoría Computadores.
-
-### CP027 — Búsqueda sin coincidencias
-- **Requisito:** RF06. **Prioridad:** Baja.
-- **Datos:** `GET /categories?search=zzz`.
-- **Resultado esperado:** HTTP 200 y lista vacía.
-
-### CP028 — Consultar listado de productos
-- **Requisito:** RF01. **Prioridad:** Alta.
-- **Datos:** `GET /products/`.
-- **Resultado esperado:** HTTP 200 y lista JSON.
-
-### CP029 — Filtrar categorías activas
-- **Requisito:** RF06. **Prioridad:** Media.
-- **Datos:** `GET /categories?active=true`.
-- **Resultado esperado:** HTTP 200 y únicamente categorías activas.
-
-## Casos de frontera
-
-### CP005-F — Crear producto con stock igual a cero
-- **Requisito:** RN03, RN07. **Prioridad:** Alta.
-- **Datos:** Producto válido con `stock=0`.
-- **Resultado esperado:** HTTP 201 y `available=false`.
-
-### CP006-F — Crear producto con precio mínimo válido
-- **Requisito:** RN02. **Prioridad:** Alta.
-- **Datos:** Producto válido con `price=0.01`.
-- **Resultado esperado:** HTTP 201.
-
-### CP007-F — Rechazar stock menor al límite
-- **Requisito:** RN03. **Prioridad:** Alta.
-- **Datos:** Producto válido con `stock=-1`.
-- **Resultado esperado:** HTTP 422.
-
-La suite automatizada cubre los casos críticos y representativos; los restantes quedan especificados para ejecución manual o ampliación futura.
+**Total:** 25 casos diseñados y 25 ejecutados. **Automatización:** 25/25; incluye 8 positivos, 10 negativos, 4 de frontera y operaciones de consulta, actualización y eliminación.

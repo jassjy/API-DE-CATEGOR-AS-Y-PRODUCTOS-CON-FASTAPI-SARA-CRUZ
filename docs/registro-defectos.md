@@ -1,36 +1,31 @@
 # Registro de defectos
 
-## DEF-001 — Se permitía crear productos con categoría inexistente
+## DEF-001 — Modelo de producto no cumplía la asociación por `category_id`
 
 | Campo | Detalle |
 |---|---|
-| Estado | Cerrado después de corrección y retest |
+| Requisito relacionado | RF05, RN06, RN08 |
+| Casos relacionados | CP-PROD-01, CP-PROD-16, CP-PROD-18 |
 | Severidad | Alta |
 | Prioridad | Alta |
-| Componente | `POST /products/` y `PATCH /products/{id}` |
-| Caso relacionado | CP024 |
-| Fecha | 17 de septiembre de 2026 |
+| Estado | Cerrado después de corrección y retest |
+| Componente | Esquemas y endpoints de productos |
+| Evidencia | Inspección inicial de `app/schemas.py` y `app/main.py`; la versión original recibía `category` textual y no verificaba su existencia |
 
-**Descripción:** La API aceptaba cualquier texto en el campo `category`, aunque el alcance de pruebas exige que el producto pertenezca a una categoría existente.
+**Precondición:** API original ejecutándose con sus datos en memoria.
 
-**Pasos para reproducir:**
+**Pasos para reproducir:** Enviar `POST /products` con un producto cuya categoría no exista y observar que la implementación original aceptaba texto libre. La implementación original tampoco exponía `PUT /products/{id}` como exige EP07.
 
-1. Ejecutar `POST /products/` con `{"name":"Mouse","category":"NoExiste","price":10,"stock":1}`.
-2. Observar que la respuesta original era HTTP 201.
-3. Verificar que el producto se agregaba a `products_db`.
+**Resultado esperado:** El contrato exige `category_id`, categoría existente y respuesta 404 cuando no existe; la actualización debe usar PUT.
 
-**Resultado esperado:** HTTP 422 con el mensaje `Category does not exist`; el producto no debe crearse.
+**Resultado obtenido inicial:** Contrato no satisfecho: se usaba `category` textual, no se garantizaba RN06 y el método era PATCH.
 
-**Resultado obtenido antes de la corrección:** HTTP 201; el producto se creaba con una categoría inexistente.
+**Corrección aplicada:** Se actualizaron `schemas.py`, `database.py` y `main.py` para usar `category_id`, validar categoría con 404, implementar `PUT /products/{id}` y aplicar todas las validaciones de creación al actualizar.
 
-**Corrección aplicada:** Se agregó una validación en `create_product` y `update_product` que compara la categoría recibida con `categories_db`. También se alinearon los datos iniciales para que `Laptops` y `Cameras` sean categorías válidas.
+**Retest:** CP-PROD-16, CP-PROD-17 y CP-PROD-18 aprobaron.
 
-**Retest:** Se ejecutó `pytest -v tests/test_products.py -k cp024` después de la corrección. Resultado: `1 passed`.
+**Regresión:** `pytest -v` ejecutó 25 casos: 25 passed, 0 failed.
 
-**Regresión:** Se ejecutó `pytest -v` sobre productos y categorías. Resultado: `26 passed`, sin regresiones detectadas.
+## Clasificación
 
-## Convención de clasificación
-
-- **Severidad:** impacto técnico o funcional del hallazgo.
-- **Prioridad:** urgencia para resolverlo.
-- Un hallazgo puede tener severidad y prioridad diferentes; no se consideran sinónimos.
+No se inventaron defectos adicionales. Los fallos de la suite final fueron cero; cualquier warning de deprecación pertenece a una dependencia del ambiente y no altera el contrato funcional.

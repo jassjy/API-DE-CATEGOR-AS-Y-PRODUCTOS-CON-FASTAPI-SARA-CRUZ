@@ -1,23 +1,26 @@
 # Matriz de trazabilidad
 
-| ID requisito | Requisito / regla | Casos relacionados |
-|---|---|---|
-| RF01 | Consultar listado de productos | CP002, CP028 |
-| RF02 | Consultar producto por ID | CP003, CP004 |
-| RF03 | Crear producto | CP005, CP006, CP007, CP008, CP009 |
-| RF04 | Actualizar parcialmente producto | CP010, CP011 |
-| RF05 | Eliminar producto | CP012, CP013 |
-| RF06 | Consultar listado de categorías | CP014, CP029 |
-| RF07 | Consultar categoría por ID | CP016, CP017 |
-| RF08 | Crear categoría | CP018, CP019 |
-| RF09 | Actualizar parcialmente categoría | CP020, CP021 |
-| RF10 | Eliminar categoría | CP022, CP023 |
-| RN01 | Nombre de producto obligatorio y válido | CP008, CP009 |
-| RN02 | Precio mayor que cero | CP006, CP007 |
-| RN03 | Stock mayor o igual que cero | CP005, CP007 |
-| RN04 | Nombre de categoría obligatorio y válido | CP018, CP019, CP020 |
-| RN05 | Recurso inexistente responde 404 | CP004, CP017, CP013, CP022, CP023 |
-| RN06 | Entrada inválida responde 422 | CP006, CP007, CP009, CP015, CP019, CP020, CP024 |
-| RN07 | Cálculo de `available` según stock | CP005, CP011 |
+| ID | Descripción | Casos relacionados | Cobertura |
+|---|---|---|---|
+| RF01 | Crear categoría válida | CP-CAT-01 | Cubierto |
+| RF02 | Listar categorías | CP-CAT-02 | Cubierto |
+| RF03 | Consultar categoría existente | CP-CAT-03 | Cubierto |
+| RF04 | 404 para categoría inexistente | CP-CAT-04 | Cubierto |
+| RF05 | Crear producto con categoría existente | CP-PROD-01, CP-PROD-10, CP-PROD-13, CP-PROD-14 | Cubierto |
+| RF06 | Listar productos | CP-PROD-02 | Cubierto |
+| RF07 | Consultar producto existente | CP-PROD-03 | Cubierto |
+| RF08 | 404 para producto inexistente | CP-PROD-04 | Cubierto |
+| RF09 | Actualizar producto válido | CP-PROD-05 | Cubierto |
+| RF10 | 404 al actualizar inexistente | CP-PROD-06 | Cubierto |
+| RF11 | Eliminar producto existente | CP-PROD-07 | Cubierto |
+| RF12 | 404 al eliminar inexistente | CP-PROD-08 | Cubierto |
+| RN01 | Nombre de categoría obligatorio, 3–60 | CP-CAT-05, CP-CAT-06 | Cubierto |
+| RN02 | Nombre de categoría no repetido case-insensitive | CP-CAT-07 | Cubierto |
+| RN03 | Nombre de producto obligatorio, 3–80 | CP-PROD-09, CP-PROD-10 | Cubierto |
+| RN04 | Precio estrictamente mayor que 0 | CP-PROD-11, CP-PROD-12, CP-PROD-13, CP-PROD-17 | Cubierto |
+| RN05 | Stock mayor o igual que 0 | CP-PROD-14, CP-PROD-15 | Cubierto |
+| RN06 | `category_id` debe existir | CP-PROD-16, CP-PROD-18 | Cubierto |
+| RN07 | Stock 0 debe aceptarse | CP-PROD-14 | Cubierto |
+| RN08 | PUT conserva las validaciones de creación | CP-PROD-05, CP-PROD-17, CP-PROD-18 | Cubierto |
 
-Todos los requisitos incluidos en el alcance tienen al menos un caso asociado. Los casos CP001–CP023 son únicos y se reutilizan en la documentación de casos, pruebas automatizadas y reporte de ejecución.
+**Cobertura documental:** 20/20 elementos del contrato relacionados con al menos un caso: 100 %. Cada caso está automatizado en `tests/test_categories.py` o `tests/test_products.py`.

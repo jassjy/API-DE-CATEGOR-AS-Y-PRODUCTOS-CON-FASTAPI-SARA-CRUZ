@@ -1,130 +1,58 @@
-# Plan de Pruebas
+# Plan de pruebas — TechStore Products & Categories API
 
-## 1. Información general
+## 1. Identificación
 
 | Campo | Valor |
 |---|---|
 | Proyecto | Products & Categories API |
-| Versión | 1.0.0 |
-| Tecnologías | Python 3.x, FastAPI, Pydantic, pytest, TestClient |
-| Persistencia | Estructuras en memoria para ambiente de pruebas |
-| Responsable | Sara Jasmin Cruz Calderon / 3407180|
+| Versión auditada | 1.0.0 |
 | Fecha | 17 de septiembre de 2026 |
+| Responsable | Sara Jasmin Cruz Calderón / 3407180 |
+| Ambiente | Python 3.12.3, FastAPI 0.141.1, Pydantic 2.13.5 |
+| Persistencia | Listas en memoria, aisladas por fixture |
 
 ## 2. Objetivo
 
-Verificar que la API de productos y categorías cumpla los comportamientos funcionales definidos, incluyendo respuestas exitosas, validaciones de entrada, consulta y manejo de recursos inexistentes, actualización parcial, eliminación, filtros y endpoints de salud.
+Verificar, con evidencia reproducible, que los endpoints de categorías y productos cumplen RF01–RF12 y RN01–RN08 del contrato del módulo IV. La auditoría cubre respuestas exitosas, validaciones, fronteras, recursos inexistentes, actualización, eliminación y asociación de productos con categorías.
 
-## 3. Alcance
+## 3. Alcance funcional
 
-### Incluido
-
-- `GET /` y `GET /health`.
-- Consulta, creación, actualización parcial (`PATCH`) y eliminación de productos.
-- Consulta, creación, actualización parcial (`PATCH`) y eliminación de categorías.
-- Filtros de productos por `category`, `available` y `search`.
-- Filtros de categorías por `active` y `search`.
-- Códigos HTTP, estructura JSON y mensajes de error.
-- Validaciones Pydantic: nombre, precio mayor que cero, stock no negativo y tipos de datos.
-- Casos positivos, negativos y de frontera.
-
-### Fuera de alcance
-
-- Autenticación, autorización y gestión de usuarios.
-- Pruebas de rendimiento, concurrencia y carga.
-- Seguridad especializada, inyección y análisis de dependencias.
-- Interfaz gráfica.
-- Persistencia real en una base de datos y migraciones.
-- Despliegue en producción, observabilidad y recuperación ante fallos de infraestructura.
-
-## 4. Requisitos y reglas verificables
-
-| ID | Descripción |
+| Recurso | Operaciones incluidas |
 |---|---|
-| RF01 | Consultar el listado de productos |
-| RF02 | Consultar un producto por ID |
-| RF03 | Crear un producto |
-| RF04 | Actualizar parcialmente un producto |
-| RF05 | Eliminar un producto |
-| RF06 | Consultar el listado de categorías |
-| RF07 | Consultar una categoría por ID |
-| RF08 | Crear una categoría |
-| RF09 | Actualizar parcialmente una categoría |
-| RF10 | Eliminar una categoría |
-| RN01 | El nombre del producto es obligatorio y debe tener entre 2 y 100 caracteres |
-| RN02 | El precio del producto debe ser mayor que cero |
-| RN03 | El stock del producto no puede ser negativo |
-| RN04 | El nombre de la categoría es obligatorio y debe tener entre 3 y 50 caracteres |
-| RN05 | Un recurso inexistente debe responder HTTP 404 |
-| RN06 | Una entrada con tipos o formato inválido debe responder HTTP 422 |
-| RN07 | Al crear o cambiar stock, `available` se calcula como `stock > 0` cuando no se envía explícitamente |
+| Categorías | `POST /categories`, `GET /categories`, `GET /categories/{id}` |
+| Productos | `POST /products`, `GET /products`, `GET /products/{id}`, `PUT /products/{id}`, `DELETE /products/{id}` |
 
-## 5. Riesgos
+Se verifican códigos 200, 201, 204, 404, 409 y 422, estructura JSON y reglas de negocio. Quedan fuera autenticación, autorización, UI, rendimiento, carga, seguridad especializada, persistencia real, migraciones y despliegue.
 
-| ID | Riesgo | Probabilidad | Impacto | Prioridad |
+## 4. Estrategia
+
+Se aplican pruebas funcionales positivas, negativas y de frontera. Los casos diseñados se identifican como CP-CAT-01 a CP-CAT-07 y CP-PROD-01 a CP-PROD-18. La selección completa está automatizada con pytest y `TestClient`; cada caso parte de datos aislados mediante el fixture `reset_db`.
+
+## 5. Riesgos priorizados
+
+| Riesgo | Probabilidad | Impacto | Prioridad | Mitigación |
 |---|---|---|---|---|
-| R01 | Aceptar un precio cero o negativo | Media | Alto | Alta |
-| R02 | Aceptar stock negativo | Media | Alto | Alta |
-| R03 | Crear un producto sin nombre o con nombre inválido | Media | Alto | Alta |
-| R04 | Devolver 200 para un producto o categoría inexistente | Alta | Alto | Crítica |
-| R05 | No recalcular `available` después de cambiar el stock | Media | Medio | Alta |
-| R06 | Eliminar un recurso inexistente sin informar el error | Media | Alto | Alta |
-| R07 | Romper la información existente al actualizar parcialmente | Media | Medio | Media |
-| R08 | Devolver datos incorrectos al aplicar filtros | Media | Medio | Media |
+| Aceptar categoría duplicada ignorando mayúsculas | Media | Alto | Alta | CP-CAT-07 |
+| Aceptar nombres menores al mínimo | Alta | Medio | Alta | CP-CAT-05, CP-PROD-09 |
+| Devolver código incorrecto para recurso inexistente | Media | Alto | Alta | CP-CAT-04, CP-PROD-04, 06, 08 |
+| Aceptar precio cero o negativo | Alta | Alto | Alta | CP-PROD-11, 12, 13, 17 |
+| Aceptar stock negativo o rechazar stock cero | Media | Alto | Alta | CP-PROD-14, 15 |
+| Asociar producto a categoría inexistente | Media | Alto | Alta | CP-PROD-16, 18 |
+| Perder datos durante actualización | Media | Medio | Media | CP-PROD-05 |
 
-Se priorizan R01, R02 y R04 porque afectan directamente la integridad de los datos y los contratos HTTP básicos de la API.
+## 6. Ambiente, herramientas y datos
 
-## 6. Estrategia
+La ejecución se realiza desde la raíz con `python3 -m pip install -r requirements.txt` y `pytest -v`. Datos base: categorías Periféricos (1) y Audio (2); productos Mouse inalámbrico (120000, stock 5, categoría 1) y Monitor (850000, stock 0, categoría 1). Fronteras: nombre de 3 caracteres, precio 0, precio negativo, precio 0.01, stock 0, stock -1 e ID 99999.
 
-Se aplicarán pruebas funcionales para verificar cada endpoint; pruebas positivas con datos válidos; pruebas negativas con datos ausentes, inválidos o recursos inexistentes; pruebas de frontera para precio, stock y longitudes mínimas; y pruebas automatizadas repetibles mediante pytest y `TestClient`. Se usará aislamiento por caso mediante el fixture `reset_db`, que restaura los datos iniciales antes de cada prueba.
+## 7. Criterios de entrada
 
-## 7. Ambiente
+La aplicación debe importar, `TestClient` debe inicializarse, las dependencias deben estar instaladas, los endpoints del alcance deben existir y los datos de prueba deben estar definidos.
 
-- Sistema operativo: Linux/Windows compatible.
-- Python: 3.x.
-- Framework: FastAPI 0.141.1.
-- Validación: Pydantic 2.13.5.
-- Servidor opcional: Uvicorn 0.52.4.
-- Pruebas: pytest 9.1.1 y FastAPI TestClient.
-- Base de datos: listas en memoria (`app/database.py`); no usar datos de producción.
+## 8. Suspensión y reanudación
 
-Comandos de ejecución:
+Se suspende si la aplicación no importa, el cliente no inicia o un fallo bloquea los casos críticos. Se reanuda corrigiendo la causa, restaurando el ambiente, repitiendo el caso bloqueado y ejecutando la regresión completa.
 
-```bash
-pip install -r requirements.txt
-pytest -v
-```
+## 9. Criterios de salida
 
-## 8. Datos de prueba
+Se considera cumplido el umbral cuando existe cobertura documental del 100 % de RF01–RF12 y RN01–RN08, se ejecuta el 100 % de los casos críticos y al menos el 90 % del total, no hay defectos críticos abiertos, hay mínimo 15 pruebas automatizadas y al menos el 90 % de aprobación de los casos ejecutados. Todo defecto debe estar vinculado a caso y requisito.
 
-| Escenario | Datos | Resultado esperado |
-|---|---|---|
-| Producto válido | `name=Mouse`, `category=Accesorios`, `price=120000`, `stock=5` | HTTP 201 |
-| Precio frontera válido | `price=0.01` | HTTP 201 |
-| Precio inválido | `price=0` o `price=-1` | HTTP 422 |
-| Stock frontera válido | `stock=0` | HTTP 201 y `available=false` |
-| Stock inválido | `stock=-1` | HTTP 422 |
-| Nombre ausente | Sin `name` | HTTP 422 |
-| Categoría válida | `name=Tablets` | HTTP 201 |
-| Categoría inválida | `name=AB` | HTTP 422 |
-| ID inexistente | `999` | HTTP 404 |
-
-## 9. Criterios de entrada
-
-- La aplicación puede importarse y `TestClient` puede inicializarse.
-- Los endpoints del alcance están implementados.
-- Las dependencias de `requirements.txt` están instaladas.
-- Los datos de prueba están definidos.
-- Los requisitos y reglas verificables están disponibles.
-
-## 10. Criterios de suspensión y reanudación
-
-Se suspenderá el ciclo si la aplicación no puede importarse, el cliente HTTP no puede inicializarse o un fallo bloquea la ejecución de los casos críticos. Se reanudará después de corregir la causa, restaurar el ambiente y ejecutar nuevamente el caso bloqueado y la regresión completa.
-
-## 11. Criterios de salida
-
-- 100 % de los casos críticos ejecutados.
-- 0 defectos críticos o altos abiertos.
-- Al menos 95 % de los casos ejecutados aprobados.
-- Reglas RN01–RN07 verificadas.
-- La suite automatizada termina sin errores de configuración.
